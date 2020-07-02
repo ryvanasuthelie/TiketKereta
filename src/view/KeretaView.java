@@ -22,15 +22,19 @@ public class KeretaView extends javax.swing.JFrame {
     /**
      * Creates new form KeretaView
      */
+    int idKereta = 0;
+    int nomorKursi = 0;
+    String namaKereta = "";
+    String jadwal = "";
     TransaksiController transaksiController;
+
     public KeretaView() throws SQLException {
         initComponents();
+        setLocationRelativeTo(null);
         this.transaksiController = new TransaksiController();
         this.getDataKereta();
-        
+
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -65,6 +69,11 @@ public class KeretaView extends javax.swing.JFrame {
         jLabel3.setText("No Kursi");
 
         btnSimpan.setText("Simpan");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
 
         btnCancel.setText("cancel");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
@@ -87,6 +96,11 @@ public class KeretaView extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblKereta);
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         btnEdit.setText("Edit");
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -96,6 +110,11 @@ public class KeretaView extends javax.swing.JFrame {
         });
 
         btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("DATA KERETA");
 
@@ -172,7 +191,7 @@ public class KeretaView extends javax.swing.JFrame {
         tfNoKursi.setText("");
         tfNama.setText("");
         tfJadwal.setText("");
-        
+
         btnSimpan.setText("Simpan");
     }//GEN-LAST:event_btnCancelActionPerformed
 
@@ -186,8 +205,12 @@ public class KeretaView extends javax.swing.JFrame {
             String id = tblKereta.getModel().getValueAt(row, col).toString();
             System.out.println("ID = " + id);
             try {
-                
-                
+                Kereta k = this.transaksiController.getDataKereta(Integer.parseInt(id)).get(0);
+                tfNama.setText(k.getNama_kereta());
+                tfJadwal.setText(k.getJadwal());
+                tfNoKursi.setText(String.valueOf(k.getNomor_kursi()));
+                idKereta = k.getId_kereta();
+
                 btnSimpan.setText("Update");
             } catch (SQLException ex) {
                 Logger.getLogger(KeretaView.class.getName()).log(Level.SEVERE, null, ex);
@@ -195,15 +218,63 @@ public class KeretaView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEditActionPerformed
 
-    
-     public void getDataKereta() throws SQLException {
-        DefaultTableModel dtmKereta = new DefaultTableModel(new String[]{"ID","Nama", "Jadwal ", "Nomor Kursi"}, 0);
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+
+        try {
+            namaKereta = tfNama.getText();
+            jadwal = tfJadwal.getText();
+            nomorKursi = Integer.parseInt(tfNoKursi.getText());
+
+            Kereta k = new Kereta();
+            k.setId_kereta(idKereta);
+            k.setNama_kereta(namaKereta);
+            k.setJadwal(jadwal);
+            k.setNomor_kursi(nomorKursi);
+            this.transaksiController.insertKereta(k);
+            this.getDataKereta();
+        } catch (SQLException ex) {
+            Logger.getLogger(KeretaView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        tfNoKursi.setText("");
+        tfNama.setText("");
+        tfJadwal.setText("");
+        idKereta = 0;
+
+        btnSimpan.setText("Simpan");
+    }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        int col = 0;
+        int row = tblKereta.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(null, "Kereta belum dipilih, Pilih kereta terlebih dahulu !");
+        } else {
+
+            try {
+                String id = tblKereta.getModel().getValueAt(row, col).toString();
+                System.out.println("ID = " + id);
+                this.transaksiController.deleteKereta(Integer.parseInt(id));
+                this.getDataKereta();
+            } catch (SQLException ex) {
+                Logger.getLogger(KeretaView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    public void getDataKereta() throws SQLException {
+        DefaultTableModel dtmKereta = new DefaultTableModel(new String[]{"ID", "Nama", "Jadwal ", "Nomor Kursi"}, 0);
         dtmKereta.setRowCount(0);
         for (Kereta k : this.transaksiController.getDataKereta(0)) {
-            dtmKereta.addRow(new String[]{String.valueOf(k.getId_kereta()),k.getNama_kereta(),k.getJadwal(),String.valueOf(k.getNomor_kursi())});
+            dtmKereta.addRow(new String[]{String.valueOf(k.getId_kereta()), k.getNama_kereta(), k.getJadwal(), String.valueOf(k.getNomor_kursi())});
         }
         tblKereta.setModel(dtmKereta);
     }
+
     /**
      * @param args the command line arguments
      */
@@ -234,7 +305,11 @@ public class KeretaView extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new KeretaView().setVisible(true);
+                try {
+                    new KeretaView().setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(KeretaView.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

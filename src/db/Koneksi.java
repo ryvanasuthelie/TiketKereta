@@ -25,8 +25,7 @@ public class Koneksi {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             System.out.println("Class Driver ditemukan");
             try {
-//                connect = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "ryvanasuthelie_07014", "ryvana");
-                connect = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","ryvanasuthelie_07014"/*username*/, "ryvana"/*pass*/);
+                connect = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "ryvanas_07014"/*username*/, "ryvana"/*pass*/);
                 System.out.println("Koneksi Database sukses");
             } catch (SQLException se) {
                 System.out.println("Koneksi Database gagal : " + se);
@@ -35,22 +34,21 @@ public class Koneksi {
             System.out.println("Class Driver tidak ditemukan, Terjadi kesalahan pada : " + err);
         }
     }
-   
 
-    public ResultSet GetData(String sql){
+    public ResultSet GetData(String sql) {
         try {
             db = connect.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             return db.executeQuery(sql);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             return null;
         }
     }
-    
-    public int ManipulasiData (String sql){
+
+    public int ManipulasiData(String sql) {
         try {
             db = connect.createStatement();
             return db.executeUpdate(sql);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             return 0;
         }
     }

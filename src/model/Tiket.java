@@ -15,7 +15,45 @@ public class Tiket {
     private int id_kereta;
     private int id_rute;
     private int harga_tiket;
+    private int id_pembeli;
     private String tanggal_keberangkatan;
+    private Pembeli pembeli;
+    private Rute rute;
+    private Kereta kereta;
+
+    public Pembeli getPembeli() {
+        return pembeli;
+    }
+
+    public void setPembeli(Pembeli pembeli) {
+        this.pembeli = pembeli;
+    }
+
+    public Rute getRute() {
+        return rute;
+    }
+
+    public void setRute(Rute rute) {
+        this.rute = rute;
+    }
+
+    public Kereta getKereta() {
+        return kereta;
+    }
+
+    public void setKereta(Kereta kereta) {
+        this.kereta = kereta;
+    }
+
+    public int getId_pembeli() {
+        return id_pembeli;
+    }
+
+    public void setId_pembeli(int id_pembeli) {
+        this.id_pembeli = id_pembeli;
+    }
+    
+    
 
     public int getId_tiket() {
         return id_tiket;
